@@ -112,6 +112,7 @@ pub fn main() !void {
     const speed: f32 = 1150 / 3;
     var quit = false;
     var last_ticks: f32 = @floatFromInt(c.SDL_GetTicks());
+    var is_fullscreen = false;
     main_loop: while (!quit) {
         var event: c.SDL_Event = undefined;
         while (c.SDL_PollEvent(&event) != 0) {
@@ -120,6 +121,15 @@ pub fn main() !void {
                     quit = true;
                 },
                 c.SDL_KEYDOWN => {
+                    switch (event.key.keysym.sym) {
+                        c.SDLK_q => break :main_loop,
+                        c.SDLK_f => {
+                            is_fullscreen = !is_fullscreen;
+                            const flags: u32 = @intFromBool(is_fullscreen);
+                            _ = c.SDL_SetWindowFullscreen(screen, flags);
+                        },
+                        else => {},
+                    }
                     if (event.key.keysym.sym == c.SDLK_q) {
                         break :main_loop;
                     }
